@@ -1,11 +1,8 @@
 # using to save lambda source code
 module "s3_bucket" {
-  source                   = "terraform-aws-modules/s3-bucket/aws"
-  version                  = "4.1.1"
-  bucket                   = "shared-source-code"
-  acl                      = "private"
-  control_object_ownership = true
-
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "4.1.1"
+  bucket  = "shared-source-code"
   versioning = {
     enabled = true
   }

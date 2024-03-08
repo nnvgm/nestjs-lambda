@@ -3,13 +3,23 @@ resource "random_password" "root_password" {
   special = false
 }
 
+resource "aws_docdb_subnet_group" "private_subnets" {
+  name       = "private_subnets"
+  subnet_ids = module.vpc.private_subnets
+  depends_on = [module.vpc]
+}
+
 resource "aws_docdb_cluster" "mongodb" {
   cluster_identifier     = "nestjs-lambda-example"
   master_username        = "root"
   master_password        = random_password.root_password.result
-  availability_zones     = data.aws_availability_zones.azs.zone_ids
+  db_subnet_group_name   = aws_docdb_subnet_group.private_subnets.id
   vpc_security_group_ids = [aws_security_group.mongodb_sg.id]
-  depends_on             = [random_password.root_password, aws_security_group.mongodb_sg]
+  depends_on = [
+    random_password.root_password,
+    aws_security_group.mongodb_sg,
+    aws_docdb_subnet_group.private_subnets
+  ]
 }
 
 resource "aws_docdb_cluster_instance" "primary_instance" {
