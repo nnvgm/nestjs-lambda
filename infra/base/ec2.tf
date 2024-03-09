@@ -33,4 +33,5 @@ module "bastion_host" {
   associate_public_ip_address = true
   user_data                   = file("./scripts/bootstrap_bastion_host.sh")
   depends_on                  = [module.vpc, aws_key_pair.keypair, aws_security_group.bastion_sg]
+  ami                         = "ami-04583d641c7c2871f" # fix
 }

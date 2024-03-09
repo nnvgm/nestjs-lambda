@@ -11,6 +11,13 @@ module "vpc" {
   private_subnets    = var.private_subnets
   public_subnets     = var.public_subnets
   enable_nat_gateway = true
+
+  private_subnet_tags = {
+    "type" = "private"
+  }
+  public_subnet_tags = {
+    "type" = "public"
+  }
 }
 
 resource "aws_security_group" "mongodb_sg" {
