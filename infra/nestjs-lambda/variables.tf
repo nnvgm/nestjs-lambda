@@ -13,19 +13,11 @@ variable "aws_accountnum" {
   type = string
 }
 
-variable "vpc_cidr" {
+variable "mongodb_uri" {
   type = string
 }
 
-variable "private_subnets" {
-  type = list(string)
-}
-
-variable "public_subnets" {
-  type = list(string)
-}
-
-variable "whitelist_ips" {
-  type    = list(string)
-  default = []
+variable "lambda_version" {
+  type    = string
+  default = "latest"
 }
