@@ -11,8 +11,9 @@ module "nestjs_lambda_function" {
   memory_size            = 1024
   timeout                = 30
   create_package         = false
-  # policy_json            = data.aws_iam_policy_document.allow_s3_access.json
-  depends_on             = [aws_security_group.lambda_sg]
+  lambda_role            = aws_iam_role.lambda_role.arn
+  create_role            = false
+  depends_on             = [aws_security_group.lambda_sg, aws_iam_role.lambda_role]
 
   s3_existing_package = {
     bucket = data.aws_s3_bucket.source_code_bucket.id
@@ -20,14 +21,16 @@ module "nestjs_lambda_function" {
   }
 
   environment_variables = {
-    PORT        = 5000
-    MONGODB_URI = var.mongodb_uri
+    PORT                    = 5000
+    MONGODB_URI             = var.mongodb_uri
+    AWS_LAMBDA_EXEC_WRAPPER = "/opt/bootstrap"
   }
+}
 
-  allowed_triggers = {
-    "ApiGateway" = {
-      service    = "apigateway"
-      source_arn = "arn:aws:execute-api:${var.aws_region}:${var.aws_accountnum}:*"
-    }
-  }
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowExecutionFromApiGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = module.nestjs_lambda_function.lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "arn:aws:execute-api:${var.aws_region}:${var.aws_accountnum}:*"
 }
