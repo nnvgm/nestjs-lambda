@@ -20,3 +20,8 @@ variable "private_subnets" {
 variable "public_subnets" {
   type = list(string)
 }
+
+variable "whitelist_ips" {
+  type    = list(string)
+  default = []
+}
